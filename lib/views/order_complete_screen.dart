@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fruit_hup/services/user_service.dart';
 import 'package:fruit_hup/views/home_screen.dart';
 import 'package:fruit_hup/views/track_order_screen.dart';
 import 'package:fruit_hup/widgets/animated_success_icon.dart';
@@ -28,17 +29,18 @@ class OrderCompleteScreen extends StatelessWidget {
           ),
           const Text(
             'Your order have been taken and is being attended to',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal,),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.normal),
             textAlign: TextAlign.center,
             softWrap: true,
           ),
           SizedBox(height: height * .06),
           SizedBox(
-            width: MediaQuery.sizeOf(context).width*.3,
+            width: MediaQuery.sizeOf(context).width * .3,
             child: CustomButton(
-              onTap: (){
-                getIt<NavigationService>().navigateReplace(const TrackOrderScreen());
-
+              onTap: () {
+                getIt<NavigationService>().navigateReplace(
+                  const TrackOrderScreen(),
+                );
               },
               buttonName: 'Track Order',
               backgroundColor: AppConstants.KmianColor,
@@ -47,18 +49,19 @@ class OrderCompleteScreen extends StatelessWidget {
           ),
           SizedBox(height: height * .06),
           SizedBox(
-            width: MediaQuery.sizeOf(context).width*.45,
+            width: MediaQuery.sizeOf(context).width * .45,
             child: CustomButton(
-              onTap: (){
-                getIt<NavigationService>().navigateReplace(const HomeScreen());
-
+              onTap: () {
+                getIt<NavigationService>().navigateReplace(
+                  HomeScreen(clientName: getIt<UserService>().clientName ?? ''),
+                );
               },
               buttonName: 'Continue Shopping',
               backgroundColor: Colors.white,
               textColor: AppConstants.KmianColor,
               borderColor: AppConstants.KmianColor,
             ),
-          )
+          ),
         ],
       ),
     );

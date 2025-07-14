@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fruit_hup/view_models/basket/basket_bloc.dart';
 import 'package:fruit_hup/views/order_complete_screen.dart';
 import 'package:fruit_hup/widgets/basket_item_widget.dart';
 import '../constants/app_constants.dart';
@@ -59,24 +61,43 @@ class BasketScreen extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            const Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  children: [
-                    BasketItemWidget(),
-                    BasketItemWidget(),
-                    BasketItemWidget(),
-                    BasketItemWidget(),
-                    BasketItemWidget(),
-                    BasketItemWidget(),
-                    BasketItemWidget(),
-                    BasketItemWidget(),
-                    BasketItemWidget(),
-                    BasketItemWidget(),
-                    BasketItemWidget(),
-                    BasketItemWidget(),
-                  ],
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: BlocBuilder<BasketBloc, BasketState>(
+                  builder: (context, state) {
+                    if (state is BasketUpdated &&
+                        state.basketItems.isNotEmpty) {
+                      return ListView.builder(
+                        itemCount: state.basketItems.length,
+                        itemBuilder: (context, index) {
+                          final entry = state.basketItems.entries.elementAt(
+                            index,
+                          );
+                          final product = entry.key;
+                          final quantity = entry.value;
+
+                          return BasketItemWidget(
+                            product: product,
+                            quantity: quantity,
+                          );
+                        },
+                      );
+                    } else if (state is BasketUpdated &&
+                        state.basketItems.isEmpty) {
+                      return const Center(
+                        child: Text(
+                          "Your Basket is Empty.",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 28,
+                          ),
+                        ),
+                      );
+                    } else {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                  },
                 ),
               ),
             ),
@@ -94,27 +115,40 @@ class BasketScreen extends StatelessWidget {
                   ),
                 ],
               ),
+
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Total',
-                        style: TextStyle(fontSize: 16, color: Colors.black54),
-                      ),
-                      SizedBox(height: 4),
-                      Text(
-                        '₦ 60,000',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF3E245D),
-                        ),
-                      ),
-                    ],
+                  BlocBuilder<BasketBloc, BasketState>(
+                    builder: (context, state) {
+                      double total = 0;
+                      if (state is BasketUpdated) {
+                        total = state.basketItems.entries
+                            .map((entry) => entry.key.price * entry.value)
+                            .fold(0.0, (sum, item) => sum + item);
+                      }
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Total',
+                            style: TextStyle(fontSize: 16, color: Colors.black54),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '₦ ${total.toStringAsFixed(2)}',
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF3E245D),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   ),
+
 
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.45,
@@ -213,12 +247,14 @@ class BasketScreen extends StatelessWidget {
                                 Expanded(
                                   child: CustomButton(
                                     onTap: () {
-                                      getIt<NavigationService>().navigateReplace(OrderCompleteScreen());
-
+                                      getIt<NavigationService>()
+                                          .navigateReplace(
+                                            const OrderCompleteScreen(),
+                                          );
                                     },
                                     buttonName: 'Pay on delivery',
                                     backgroundColor: Colors.white,
-                                    textColor:  AppConstants.KmianColor,
+                                    textColor: AppConstants.KmianColor,
                                     borderColor: AppConstants.KmianColor,
                                   ),
                                 ),
@@ -426,18 +462,17 @@ class BasketScreen extends StatelessWidget {
                         ),
                       ),
                       Container(
-                        padding: EdgeInsets.all(20),
+                        padding: const EdgeInsets.all(20),
                         width: double.infinity,
                         decoration: const BoxDecoration(
                           color: AppConstants.KmianColor,
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(24),
-                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(24)),
                         ),
                         child: TextButton(
                           onPressed: () {
-                            getIt<NavigationService>().navigateReplace(OrderCompleteScreen());
-
+                            getIt<NavigationService>().navigateReplace(
+                              const OrderCompleteScreen(),
+                            );
                           },
                           child: Container(
                             decoration: const BoxDecoration(

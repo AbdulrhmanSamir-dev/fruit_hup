@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fruit_hup/view_models/products/products_bloc.dart';
 import 'package:fruit_hup/widgets/custom_product_card.dart';
 
 import '../constants/app_constants.dart';
 
 class ProductSectionWithTabs extends StatefulWidget {
   const ProductSectionWithTabs({super.key});
+
 
   @override
   State<ProductSectionWithTabs> createState() => _ProductSectionWithTabsState();
@@ -25,162 +28,17 @@ class _ProductSectionWithTabsState extends State<ProductSectionWithTabs> {
     Color(0xFFFFF3E0),
   ];
 
-  final Map<String, List<Map<String, dynamic>>> productsByTab = {
-    'Hottest': [
-      {
-        'image': 'assets/fruitHupPics/item-removebg-preview.png',
-        'title': 'Mango',
-        'price': '4.99',
-      },
-      {
-        'image': 'assets/fruitHupPics/item-removebg-preview.png',
-        'title': 'Strawberry',
-        'price': '5.49',
-      },
-      {
-        'image': 'assets/fruitHupPics/item-removebg-preview.png',
-        'title': 'Strawberry',
-        'price': '5.49',
-      },
-      {
-        'image': 'assets/fruitHupPics/item-removebg-preview.png',
-        'title': 'Strawberry',
-        'price': '5.49',
-      },
-      {
-        'image': 'assets/fruitHupPics/item-removebg-preview.png',
-        'title': 'Strawberry',
-        'price': '5.49',
-      },
-      {
-        'image': 'assets/fruitHupPics/item-removebg-preview.png',
-        'title': 'Strawberry',
-        'price': '5.49',
-      },
-      {
-        'image': 'assets/fruitHupPics/item-removebg-preview.png',
-        'title': 'Strawberry',
-        'price': '5.49',
-      },
-      {
-        'image': 'assets/fruitHupPics/item-removebg-preview.png',
-        'title': 'Strawberry',
-        'price': '5.49',
-      },
-      {
-        'image': 'assets/fruitHupPics/item-removebg-preview.png',
-        'title': 'Strawberry',
-        'price': '5.49',
-      },
-      {
-        'image': 'assets/fruitHupPics/item-removebg-preview.png',
-        'title': 'Strawberry',
-        'price': '5.49',
-      },
-    ],
-    'Popular': [
-      {
-        'image': 'assets/fruitHupPics/item-removebg-preview.png',
-        'title': 'Apple',
-        'price': '3.99',
-      },
-      {
-        'image': 'assets/fruitHupPics/item-removebg-preview.png',
-        'title': 'Orange',
-        'price': '4.25',
-      },
-      {
-        'image': 'assets/fruitHupPics/item-removebg-preview.png',
-        'title': 'Orange',
-        'price': '4.25',
-      },
-      {
-        'image': 'assets/fruitHupPics/item-removebg-preview.png',
-        'title': 'Orange',
-        'price': '4.25',
-      },
-      {
-        'image': 'assets/fruitHupPics/item-removebg-preview.png',
-        'title': 'Orange',
-        'price': '4.25',
-      },
-      {
-        'image': 'assets/fruitHupPics/item-removebg-preview.png',
-        'title': 'Orange',
-        'price': '4.25',
-      },
-      {
-        'image': 'assets/fruitHupPics/item-removebg-preview.png',
-        'title': 'Orange',
-        'price': '4.25',
-      },
-    ],
-    'New combo': [
-      {
-        'image': 'assets/fruitHupPics/item-removebg-preview.png',
-        'title': 'Fruit Salad',
-        'price': '6.99',
-      },
-      {
-        'image': 'assets/fruitHupPics/item-removebg-preview.png',
-        'title': 'Fruit Salad',
-        'price': '6.99',
-      },
-      {
-        'image': 'assets/fruitHupPics/item-removebg-preview.png',
-        'title': 'Fruit Salad',
-        'price': '6.99',
-      },
-      {
-        'image': 'assets/fruitHupPics/item-removebg-preview.png',
-        'title': 'Fruit Salad',
-        'price': '6.99',
-      },
-      {
-        'image': 'assets/fruitHupPics/item-removebg-preview.png',
-        'title': 'Fruit Salad',
-        'price': '6.99',
-      },
-      {
-        'image': 'assets/fruitHupPics/item-removebg-preview.png',
-        'title': 'Fruit Salad',
-        'price': '6.99',
-      },
-    ],
-    'Top': [
-      {
-        'image': 'assets/fruitHupPics/item-removebg-preview.png',
-        'title': 'Banana',
-        'price': '2.99',
-      },
-      {
-        'image': 'assets/fruitHupPics/item-removebg-preview.png',
-        'title': 'Banana',
-        'price': '2.99',
-      },
-      {
-        'image': 'assets/fruitHupPics/item-removebg-preview.png',
-        'title': 'Banana',
-        'price': '2.99',
-      },
-      {
-        'image': 'assets/fruitHupPics/item-removebg-preview.png',
-        'title': 'Banana',
-        'price': '2.99',
-      },
-      {
-        'image': 'assets/fruitHupPics/item-removebg-preview.png',
-        'title': 'Banana',
-        'price': '2.99',
-      },
-    ],
-  };
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    final firstTag=tabs[0].toLowerCase();
+    context.read<ProductsBloc>().add(ProductsByTags(tag: firstTag));
+  }
+
 
   @override
   Widget build(BuildContext context) {
-    final selectedTab = tabs[selectedIndex];
-    final currentProducts = productsByTab[selectedTab]!;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -195,6 +53,9 @@ class _ProductSectionWithTabsState extends State<ProductSectionWithTabs> {
                   setState(() {
                     selectedIndex = index;
                   });
+                  final tag = tabs[index].toLowerCase();
+
+                  context.read<ProductsBloc>().add(ProductsByTags(tag: tag));
                 },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
@@ -229,21 +90,34 @@ class _ProductSectionWithTabsState extends State<ProductSectionWithTabs> {
         ),
 
         const SizedBox(height: 12),
-        SizedBox(
-          height: 180,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: currentProducts.length,
-            itemBuilder: (context, index) {
-              final product = currentProducts[index];
-              final color=productCardColor[index%productCardColor.length];
-              return CustomProductCard(
-                imagePath: product['image'],
-                title: product['title'],
-                price: product['price'], color: color,
+        BlocBuilder<ProductsBloc, ProductsState>(
+          builder: (context, state) {
+            if (state is ProductLoading) {
+              return const Center(child: CircularProgressIndicator.adaptive());
+            } else if (state is ProductLoaded) {
+              final products = state.products;
+              return SizedBox(
+                height: 180,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: products.length,
+                  itemBuilder: (context, index) {
+                    final product = products[index];
+                    final color =
+                        productCardColor[index % productCardColor.length];
+                    return CustomProductCard(
+                      productModel: product,
+                      color: color,
+                    );
+                  },
+                ),
               );
-            },
-          ),
+            }else if(state is ProductError){
+              return Center(child: Text(state.message));
+            }else{
+              return const SizedBox.shrink();
+            }
+          },
         ),
       ],
     );

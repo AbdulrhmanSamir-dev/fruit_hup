@@ -6,11 +6,10 @@ import 'package:fruit_hup/widgets/custom_text_form_field.dart';
 import '../constants/app_constants.dart';
 import '../services/init_get_it.dart';
 import '../services/navigation_service.dart';
+import '../services/user_service.dart';
 
 class AuthenticationScreen extends StatefulWidget {
-  const AuthenticationScreen({super.key,});
-
-
+  const AuthenticationScreen({super.key});
 
   @override
   State<AuthenticationScreen> createState() => _AuthenticationScreenState();
@@ -18,6 +17,7 @@ class AuthenticationScreen extends StatefulWidget {
 
 class _AuthenticationScreenState extends State<AuthenticationScreen> {
   String? clientName;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,16 +59,29 @@ class _AuthenticationScreenState extends State<AuthenticationScreen> {
                       ),
                       const SizedBox(height: 5),
                       CustomTextFormField(
-                        onChanged: (data){
-                          clientName=data;
+                        onChanged: (data) {
+                          clientName = data;
                         },
                         hintText: 'First Name',
                       ),
                       const SizedBox(height: 30),
-                      CustomButton(onTap: () {
-                        getIt<NavigationService>().navigateReplace(const HomeScreen());
+                      CustomButton(
+                        onTap: () {
+                          if (clientName == null ||
+                              clientName!.trim().isEmpty) {
+                            getIt<NavigationService>().showSnackBar(
+                              'Please enter your name to continue',
+                            );
+                            return;
+                          }
+                          getIt<UserService>().clientName = clientName!.trim();
 
-                      }, buttonName: "Start Ordering"),
+                          getIt<NavigationService>().navigateReplace(
+                             HomeScreen(clientName: clientName!.trim(),),
+                          );
+                        },
+                        buttonName: "Start Ordering",
+                      ),
                       const SizedBox(height: 30),
                     ],
                   ),

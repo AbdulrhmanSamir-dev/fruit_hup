@@ -1,72 +1,75 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../models/product_model.dart';
+import '../view_models/basket/basket_bloc.dart';
 
 class BasketItemWidget extends StatelessWidget {
-  const BasketItemWidget({super.key});
+  final ProductModel product;
+  final int quantity;
+
+  const BasketItemWidget({
+    super.key,
+    required this.product,
+    required this.quantity,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              height: 60,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.asset(
+              product.image,
               width: 60,
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.orange.shade50,
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Image.asset(
-                'assets/fruitHupPics/item-removebg-preview.png',
-                fit: BoxFit.contain,
-              ),
+              height: 60,
+              fit: BoxFit.cover,
             ),
-            const SizedBox(width: 16),
+          ),
 
-            const Column(
+          const SizedBox(width: 15),
+
+          Expanded(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Quinoa fruit salad',
-                  style: TextStyle(
+                  product.name,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
                     fontSize: 16,
-                    fontWeight: FontWeight.w600,
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
-                  '2packs',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey,
-                  ),
+                  '$quantity packs',
+                  style: const TextStyle(color: Colors.black54, fontSize: 14),
                 ),
               ],
             ),
-
-            const Spacer(),
-
-            const Text(
-              '\$ 20,000',
-              style: TextStyle(
-                fontSize: 16,
-                color: Color(0xFF3E245D),
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Container(
-            height: 2,
-            width: double.infinity,
-            color: Colors.grey.shade100,
           ),
-        )
-      ],
+
+          Text(
+            '\$ ${(product.price * quantity).toStringAsFixed(0)}',
+            style: const TextStyle(
+              fontSize: 16,
+              color: Color(0xFF3E245D),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+
+          IconButton(
+            icon: const Icon(Icons.remove_circle_outline),
+            onPressed: () {
+              context.read<BasketBloc>().add(
+                RemoveFromBasket(productModel: product),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }
